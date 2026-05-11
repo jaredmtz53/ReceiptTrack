@@ -52,11 +52,11 @@ class Receipt(Base):
     )
     receipt_image_url: Mapped[str|None] = mapped_column(
         String,
-        nullable=False
+        nullable=True
     )
     created_at: Mapped[datetime.datetime] = mapped_column(
         DateTime(),
-        default=datetime.datetime.now()
+        default=datetime.datetime.now
     )
 
     category: Mapped["Category"] = relationship(
