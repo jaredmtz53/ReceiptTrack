@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -38,7 +40,7 @@ def create_receipt(
 
     return new_receipt
 
-def get_receipt(db: Session, receipt_id: int):
+def get_receipt(db: Session, receipt_id: uuid.UUID):
     stmt = select(Receipt).where(Receipt.id == receipt_id)
     receipt = db.execute(stmt).scalar_one_or_none()
     if not receipt:
@@ -52,7 +54,7 @@ def get_receipts(db: Session):
 
 def update_receipt(
     db: Session,
-    receipt_id: int,
+    receipt_id: uuid.UUID,
     receipt_data: ReceiptCreate
 ):
     stmt = select(Receipt).where(Receipt.id == receipt_id)
@@ -60,7 +62,7 @@ def update_receipt(
     if not receipt:
         raise HTTPException(status_code=404, detail="Receipt not found")
 
-    updated_data = receipt.data.model_dump()
+    updated_data = receipt_data.model_dump(exclude={"items"})
     for key, value in updated_data.items():
         setattr(receipt, key, value)
 
@@ -69,12 +71,11 @@ def update_receipt(
 
     return receipt
 
-def delete_receipt(db: Session, receipt_id: int):
+def delete_receipt(db: Session, receipt_id: uuid.UUID):
     stmt = select(Receipt).where(Receipt.id == receipt_id)
     receipt = db.execute(stmt).scalar_one_or_none()
     if not receipt:
         raise HTTPException(status_code=404, detail="Receipt not found")
     db.delete(receipt)
     db.commit()
-    return receipt
-
+    return {"message": "Receipt deleted successfully"}

@@ -13,7 +13,7 @@ class ReceiptItem(Base):
     item_name: Mapped[str] = mapped_column(String)
     quantity: Mapped[int] = mapped_column(Integer)
     item_price: Mapped[float] = mapped_column(Float)
-    receipt_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("receipts.id"))
+    receipt_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("receipts.id", ondelete="CASCADE"))
 
 
     receipt: Mapped["Receipt"] = relationship(

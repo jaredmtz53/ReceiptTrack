@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -7,7 +9,7 @@ from app.models.receipt_item import ReceiptItem
 from app.schemas.receipt import ReceiptItemCreate
 
 
-def get_receipt_items(db: Session, receipt_id: int):
+def get_receipt_items(db: Session, receipt_id: uuid.UUID):
     stmt = select(ReceiptItem).where(ReceiptItem.receipt_id == receipt_id)
     receipt_items = db.execute(stmt).scalars().all()
     return receipt_items
