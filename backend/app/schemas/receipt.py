@@ -16,7 +16,7 @@ class ReceiptCreate(BaseModel):
     total: float
     payment_method: str | None = None
     card_last_four_digits: str | None = None
-    receipt_image_url: str | None = None
+    receipt_image_key: str | None = None
     items: list[ReceiptItemCreate] 
 
 class ResponseReceipt(BaseModel):

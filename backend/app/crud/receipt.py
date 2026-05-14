@@ -22,7 +22,7 @@ def create_receipt(
         total= receipt_data.total,
         payment_method= receipt_data.payment_method,
         card_last_four_digits= receipt_data.card_last_four_digits,
-        receipt_image_url= receipt_data.receipt_image_url,
+        receipt_image_key= receipt_data.receipt_image_key,
 
     )
 
@@ -79,3 +79,13 @@ def delete_receipt(db: Session, receipt_id: uuid.UUID):
     db.delete(receipt)
     db.commit()
     return {"message": "Receipt deleted successfully"}
+
+def update_receipt_image_key(db: Session, receipt_id: uuid.UUID, object_key: str):
+    stmt = select(Receipt).where(Receipt.id == receipt_id)
+    receipt = db.execute(stmt).scalar_one_or_none()
+    if not receipt:
+        raise HTTPException(status_code=404, detail="Receipt not found")
+    receipt.receipt_image_key = object_key
+    db.commit()
+    db.refresh(receipt)
+    return receipt

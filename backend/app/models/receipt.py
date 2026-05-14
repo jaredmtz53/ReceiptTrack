@@ -50,7 +50,7 @@ class Receipt(Base):
         String(20),
         default="processing"
     )
-    receipt_image_url: Mapped[str|None] = mapped_column(
+    receipt_image_key: Mapped[str|None] = mapped_column(
         String,
         nullable=True
     )

@@ -7,6 +7,7 @@ from app.crud.receipt import get_receipt, get_receipts, create_receipt, update_r
 from app.db.dependencies import get_db
 from app.schemas.receipt import ReceiptCreate
 from app.crud.receipt_item import get_receipt_items
+from app.services.s3 import generate_receipt_image_url
 
 router = APIRouter(
     prefix="/receipt",
@@ -14,8 +15,24 @@ router = APIRouter(
 )
 
 @router.get("/{receipt_id}")
-def get_receipt_route(receipt_id: uuid.UUID, db: Session = Depends(get_db)):
-    return get_receipt(db, receipt_id)
+def get_receipt_route(
+    receipt_id: uuid.UUID,
+    db: Session = Depends(get_db)
+):
+
+    receipt = get_receipt(db, receipt_id)
+
+    image_url = None
+
+    if receipt.receipt_image_key:
+        image_url = generate_receipt_image_url(
+            receipt.receipt_image_key
+        )
+
+    return {
+        "id": receipt.id,
+        "image_url": image_url,
+    }
 
 
 @router.get("/")
